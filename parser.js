@@ -15,7 +15,6 @@ function parse() {
 
   for (let node of nodes) {
     for (var i = 0; i < node.possibleFirstElements.length; i++) {
-      console.log(node.possibleFirstElements.length);
       while (true) {
         if (isVariable(node.possibleFirstElements[i])) {
           let found = nodes.find(
@@ -34,6 +33,8 @@ function parse() {
         }
       }
     }
+
+    node.terminalSymbols = [...new Set(node.terminalSymbols)];
   }
 
   console.log(nodes);
@@ -48,18 +49,17 @@ function getPossibleFirstElements(node) {
 
   possibleFirstElements.push(node.split("->")[1][0]).toString();
 
-  if (node.includes("|")) {
-    possibleFirstElements.push(node[node.indexOf("|") + 1]).toString();
+  for (var i = 0; i < node.length; i++) {
+    if (node[i] === "|") {
+      possibleFirstElements.push(node[i + 1]).toString();
+    }
   }
 
   if (node.includes("E")) {
     possibleFirstElements.push("E").toString();
   }
 
-  // Turning into a distinct array
-  possibleFirstElements = possibleFirstElements.filter(
-    (item, i, ar) => ar.indexOf(item) === i
-  );
+  possibleFirstElements = [...new Set(possibleFirstElements)];
 
   return possibleFirstElements;
 }

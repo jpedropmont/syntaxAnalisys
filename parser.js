@@ -11,7 +11,7 @@
 function first() {
   const gramatic = document.getElementById("input").value.replace(/ /g, "");
 
-  let nodes = retrieveNodes(gramatic);
+  let nodes = retrieveFirstNodes(gramatic);
 
   for (let node of nodes) {
     let indexOflastIteratedVariable = 0;
@@ -60,6 +60,14 @@ function first() {
 
     var index = node.terminalSymbols.indexOf(undefined);
     if (index !== -1) node.terminalSymbols.splice(index, 1);
+
+    if (hadReplacement) {
+      if (node.possibleFirstElements[node.length - 1] !== "0") {
+        node.terminalSymbols = node.terminalSymbols.filter(
+          (terminalSymbol) => terminalSymbol !== "0"
+        );
+      }
+    }
   }
 
   console.log(nodes);
@@ -99,7 +107,7 @@ function getPossibleFirstElements(node) {
   return possibleFirstElements;
 }
 
-function retrieveNodes(gramatic) {
+function retrieveFirstNodes(gramatic) {
   let nodes = [];
   let nodesTemp = gramatic.split(":");
 

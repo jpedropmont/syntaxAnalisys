@@ -74,6 +74,7 @@ function first() {
     }
   }
 
+  console.log("FIRST");
   for (let node of nodes) {
     console.log(node.variable + " = " + node.firts);
   }

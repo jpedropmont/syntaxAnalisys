@@ -12,49 +12,6 @@
     S->ABCDE:A->a|0:B->b|0:C->c:D->d|0:E->e|0
 */
 
-function follow() {
-  const gramatic = document.getElementById("follow").value.replace(/ /g, "");
-
-  let nodes = retriveFollowNodes(gramatic);
-
-  for (node of nodes) {
-  }
-
-  for (let node of nodes) {
-    console.log(node);
-  }
-  console.log("===============================");
-}
-
-function retriveFollowNodes(gramatic) {
-  let nodes = [];
-  let nodesTemp = gramatic.split(":");
-
-  var i = 0;
-
-  while (i < nodesTemp.length) {
-    if (i === 0) {
-      nodes.push({
-        variable: nodesTemp[i][0],
-        followers: ["$"],
-        mainExpression: true,
-        position: null,
-      });
-    } else {
-      nodes.push({
-        variable: nodesTemp[i][0],
-        followers: [],
-        mainExpression: false,
-        position: i,
-      });
-    }
-
-    i++;
-  }
-
-  return nodes;
-}
-
 function first() {
   const gramatic = document.getElementById("first").value.replace(/ /g, "");
 

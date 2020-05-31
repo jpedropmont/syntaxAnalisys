@@ -1,13 +1,18 @@
 <html>
   <head>
-    <script src="parser.js"></script>
+    <script src="parser-first.js"></script>
+    <script src="parser-follow.js"></script>
   </head>
 
   <body>
     <input type="text" id="first" value="S->AB:A->aA|a|0:B->bB|c" />
     <button type="button" onclick="first()">Submit</button>
     <br />
-    <input type="text" id="follow" value="S->AB:A->aA|a|0:B->bB|c" />
+    <input
+      type="text"
+      id="follow"
+      value="S->ABCDE:A->a|0:B->b|0:C->c:D->d|0:E->e|0"
+    />
     <button type="button" onclick="follow()">Submit</button>
   </body>
 </html>

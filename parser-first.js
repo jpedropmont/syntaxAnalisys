@@ -1,13 +1,9 @@
 /* 
-    Nós:
+    Nodes:
     S → AB
     A → aA | a | 0
     B → bB | c
-
-    Expressão passada:
-    S->AB:A->aA|a|0:B->bB|c
-
-
+    
     Exemplos:
     S->ABCDE:A->a|0:B->b|0:C->c:D->d|0:E->e|0
 */

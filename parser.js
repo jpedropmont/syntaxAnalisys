@@ -6,10 +6,57 @@
 
     Expressão passada:
     S->AB:A->aA|a|0:B->bB|c
+
+
+    Exemplos:
+    S->ABCDE:A->a|0:B->b|0:C->c:D->d|0:E->e|0
 */
 
+function follow() {
+  const gramatic = document.getElementById("follow").value.replace(/ /g, "");
+
+  let nodes = retriveFollowNodes(gramatic);
+
+  for (node of nodes) {
+  }
+
+  for (let node of nodes) {
+    console.log(node);
+  }
+  console.log("===============================");
+}
+
+function retriveFollowNodes(gramatic) {
+  let nodes = [];
+  let nodesTemp = gramatic.split(":");
+
+  var i = 0;
+
+  while (i < nodesTemp.length) {
+    if (i === 0) {
+      nodes.push({
+        variable: nodesTemp[i][0],
+        followers: ["$"],
+        mainExpression: true,
+        position: null,
+      });
+    } else {
+      nodes.push({
+        variable: nodesTemp[i][0],
+        followers: [],
+        mainExpression: false,
+        position: i,
+      });
+    }
+
+    i++;
+  }
+
+  return nodes;
+}
+
 function first() {
-  const gramatic = document.getElementById("input").value.replace(/ /g, "");
+  const gramatic = document.getElementById("first").value.replace(/ /g, "");
 
   let nodes = retrieveFirstNodes(gramatic);
 
@@ -46,31 +93,34 @@ function first() {
               );
             }
           }
-          node.terminalSymbols.push("0");
+          node.firts.push("0");
           i++;
         } else {
-          node.terminalSymbols.push(node.possibleFirstElements[i]);
+          node.firts.push(node.possibleFirstElements[i]);
           break;
         }
       }
     }
 
-    // Making values of terminalSymbols unique.
-    node.terminalSymbols = [...new Set(node.terminalSymbols)];
+    // Making values of firts unique.
+    node.firts = [...new Set(node.firts)];
 
-    var index = node.terminalSymbols.indexOf(undefined);
-    if (index !== -1) node.terminalSymbols.splice(index, 1);
+    var index = node.firts.indexOf(undefined);
+    if (index !== -1) node.firts.splice(index, 1);
 
     if (hadReplacement) {
       if (node.possibleFirstElements[node.length - 1] !== "0") {
-        node.terminalSymbols = node.terminalSymbols.filter(
+        node.firts = node.firts.filter(
           (terminalSymbol) => terminalSymbol !== "0"
         );
       }
     }
   }
 
-  console.log(nodes);
+  for (let node of nodes) {
+    console.log(node.variable + " = " + node.firts);
+  }
+  console.log("===============================");
 }
 
 function typeOfPossibleFirstElement(char) {
@@ -116,7 +166,7 @@ function retrieveFirstNodes(gramatic) {
       variable: nodeTemp[0],
       expression: nodeTemp.split("->")[1],
       possibleFirstElements: getPossibleFirstElements(nodeTemp),
-      terminalSymbols: [],
+      firts: [],
     });
   }
 

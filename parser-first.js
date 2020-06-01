@@ -72,6 +72,7 @@ function first() {
 
   console.log("FIRST");
   for (let node of nodes) {
+    node.firts = node.firts.sort();
     console.log(node.variable + " = " + node.firts);
   }
   console.log("===============================");

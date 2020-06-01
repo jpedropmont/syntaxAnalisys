@@ -61,7 +61,6 @@ function follow() {
       }
     }
 
-    nodes[i].followers = [...new Set(nodes[i].followers)];
     for (var x = 0; x < nodes[i].followers.length; x++) {
       if (nodes[i].followers[x] === "0") {
         nodes[i].followers[x] = "$";

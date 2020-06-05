@@ -38,37 +38,39 @@ function follow() {
 
   for (var i = 0; i < nodes.length; i++) {
     for (var j = 0; j < nodes.length; j++) {
-      for (var x = 0; x < nodes[j].expression.length; x++) {
-        if (nodes[i].variable === nodes[j].expression[x]) {
-          let count = 1;
-          let nextElement = nodes[j].expression[x + count];
-          while (true) {
-            if (type(nextElement) === "Variable") {
-              let firstsOfNextElement = findFirstExpression(
-                nextElement,
-                firsts
-              );
-              if (firstsOfNextElement.indexOf("0") !== -1) {
-                let tempFirstsOfNextElement = firstsOfNextElement.filter(
-                  (element) => element !== "0"
+      if (i !== j) {
+        for (var x = 0; x < nodes[j].expression.length; x++) {
+          if (nodes[i].variable === nodes[j].expression[x]) {
+            let count = 1;
+            let nextElement = nodes[j].expression[x + count];
+            while (true) {
+              if (type(nextElement) === "Variable") {
+                let firstsOfNextElement = findFirstExpression(
+                  nextElement,
+                  firsts
                 );
-                nodes[i].followers = nodes[i].followers.concat(
-                  tempFirstsOfNextElement
-                );
-                count += 1;
-                nextElement = nodes[j].expression[x + count];
+                if (firstsOfNextElement.indexOf("0") !== -1) {
+                  let tempFirstsOfNextElement = firstsOfNextElement.filter(
+                    (element) => element !== "0"
+                  );
+                  nodes[i].followers = nodes[i].followers.concat(
+                    tempFirstsOfNextElement
+                  );
+                  count += 1;
+                  nextElement = nodes[j].expression[x + count];
+                } else {
+                  nodes[i].followers = nodes[i].followers.concat(
+                    firstsOfNextElement
+                  );
+                  break;
+                }
+              } else if (type(nextElement) === "Terminal Symbol") {
+                nodes[i].followers.push(nextElement);
+                break;
               } else {
-                nodes[i].followers = nodes[i].followers.concat(
-                  firstsOfNextElement
-                );
+                nodes[i].followers.push("$");
                 break;
               }
-            } else if (type(nextElement) === "Terminal Symbol") {
-              nodes[i].followers.push(nextElement);
-              break;
-            } else {
-              nodes[i].followers.push("$");
-              break;
             }
           }
         }

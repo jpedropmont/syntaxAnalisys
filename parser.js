@@ -1,5 +1,5 @@
 /* 
-    Nodes:
+    Example of Nodes:
     S → ABCDE
     A → a|0
     B → b|0
@@ -7,21 +7,103 @@
     D → d|0
     E → e|0
     
-    Examples:
+    Examples of Gramatics:
     S->ABCDE:A->a|0:B->b|0:C->c:D->d|0:E->e|0
     S->Bb|Cd:B->aB|0:C->cC|0
     S->B|Cd:B->aB|0:C->cC|0
+    S->cAa:A->cB|B:B->bcB|0
 */
 
+/* function makePredictiveSyntacticTable() {
+  const gramatic = document
+    .getElementById("expression")
+    .value.replace(/ /g, "");
+  let productions = retrieveProductions(gramatic);
+  let information = tableInformation(gramatic);
+
+  var row = information[0].length + 1;
+  var column = information[1].length + 2;
+  var f = new Array();
+
+  for (i = 0; i < row; i++) {
+    f[i] = new Array();
+    for (j = 0; j < column; j++) {
+      if (i === 0 && j > 0) {
+        f[i][j] = information[1][j - 1];
+      } else if (j === 0 && i > 0) {
+        f[i][j] = information[0][i - 1];
+      } else {
+        f[i][j] = 0;
+      }
+    }
+  }
+
+  f[0][column - 1] = "$";
+  f[0][0] = null;
+
+  let firsts = first();
+
+  for (let production of productions) {
+  }
+
+  console.table(f);
+}
+
+function tableInformation(gramatic) {
+  let information = [];
+  let variables = [];
+  let terminalSymbols = [];
+
+  for (let element of gramatic) {
+    if (element.match(/[A-Z]/)) {
+      variables.push(element);
+    } else if (element.match(/[a-z]/)) {
+      terminalSymbols.push(element);
+    }
+  }
+
+  variables = [...new Set(variables)];
+  terminalSymbols = [...new Set(terminalSymbols)];
+  terminalSymbols = terminalSymbols.sort();
+
+  information.push(variables);
+  information.push(terminalSymbols);
+
+  return information;
+}
+
+function retrieveProductions(gramatic) {
+  let productions = [];
+  let productionsTemp = gramatic.split(":");
+
+  for (var i = 0; i < productionsTemp.length; i++) {
+    if (productionsTemp[i].indexOf("|") !== -1) {
+      let variable = productionsTemp[i][0];
+      let p = productionsTemp[i].split("->")[1].split("|");
+      for (var j = 0; j < p.length; j++) {
+        productions.push(variable + "->" + p[j]);
+      }
+    } else {
+      productions.push(productionsTemp[i]);
+    }
+  }
+
+  return productions;
+} */
+
 function print() {
+  const gramatic = document
+    .getElementById("expression")
+    .value.replace(/ /g, "");
+  //makePredictiveSyntacticTable();
   console.log("FIRSTS");
-  const firsts = first();
+  const firsts = first(gramatic);
   for (let first of firsts) {
     console.log(first.variable + " = " + first.firsts);
   }
   console.log("===================");
   console.log("FOLLOW");
-  const followers = follow();
+  const followers = follow(gramatic);
   for (let follow of followers) {
     console.log(follow.variable + " = " + follow.followers);
   }
@@ -29,12 +111,9 @@ function print() {
   console.log("");
 }
 
-function follow() {
-  const gramatic = document
-    .getElementById("expression")
-    .value.replace(/ /g, "");
+function follow(gramatic) {
   let nodes = retriveFollowNodes(gramatic);
-  let firsts = first();
+  let firsts = first(gramatic);
 
   for (var i = 0; i < nodes.length; i++) {
     for (var j = 0; j < nodes.length; j++) {
@@ -68,7 +147,9 @@ function follow() {
                 nodes[i].followers.push(nextElement);
                 break;
               } else {
-                nodes[i].followers.push("$");
+                nodes[i].followers = nodes[i].followers.concat(
+                  nodes[j].followers
+                );
                 break;
               }
             }
@@ -76,6 +157,10 @@ function follow() {
         }
       }
     }
+  }
+
+  for (let node of nodes) {
+    node.followers = [...new Set(node.followers)];
   }
 
   return nodes;
@@ -90,7 +175,7 @@ function type(char) {
     } else if (char.match(/[a-z]/)) {
       return "Terminal Symbol";
     } else {
-      return "Symbol";
+      return "Else";
     }
   } else {
     return "Undefined";
@@ -125,11 +210,7 @@ function retriveFollowNodes(gramatic) {
   return nodes;
 }
 
-function first() {
-  const gramatic = document
-    .getElementById("expression")
-    .value.replace(/ /g, "");
-
+function first(gramatic) {
   let nodes = retrieveFirstNodes(gramatic);
 
   for (let node of nodes) {
@@ -137,10 +218,7 @@ function first() {
     let hadReplacement = false;
     for (var i = 0; i < node.possibleFirstElements.length; i++) {
       while (true) {
-        if (
-          typeOfPossibleFirstElement(node.possibleFirstElements[i]) ===
-          "Variable"
-        ) {
+        if (type(node.possibleFirstElements[i]) === "Variable") {
           let found = nodes.find(
             (element) => element.variable === node.possibleFirstElements[i]
           );
@@ -152,9 +230,7 @@ function first() {
             found.possibleFirstElements
           );
           hadReplacement = true;
-        } else if (
-          typeOfPossibleFirstElement(node.possibleFirstElements[i]) === "Epslon"
-        ) {
+        } else if (type(node.possibleFirstElements[i]) === "Epslon") {
           if (hadReplacement) {
             if (
               node.expression[indexOflastIteratedVariable + 1].match(/[A-Z]/)
@@ -196,20 +272,6 @@ function first() {
   }
   /* console.log("==============================="); */
   return nodes;
-}
-
-function typeOfPossibleFirstElement(char) {
-  if (char !== undefined) {
-    if (char.match(/[A-Z]/)) {
-      return "Variable";
-    } else if (char === "0") {
-      return "Epslon";
-    } else {
-      return "Terminal Symbol";
-    }
-  } else {
-    return "Undefined";
-  }
 }
 
 function getPossibleFirstElements(node) {

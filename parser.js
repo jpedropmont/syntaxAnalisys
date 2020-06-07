@@ -14,10 +14,7 @@
     S->cAa:A->cB|B:B->bcB|0
 */
 
-/* function makePredictiveSyntacticTable() {
-  const gramatic = document
-    .getElementById("expression")
-    .value.replace(/ /g, "");
+function makePredictiveSyntacticTable(gramatic) {
   let productions = retrieveProductions(gramatic);
   let information = tableInformation(gramatic);
 
@@ -33,7 +30,7 @@
       } else if (j === 0 && i > 0) {
         f[i][j] = information[0][i - 1];
       } else {
-        f[i][j] = 0;
+        f[i][j] = "erro";
       }
     }
   }
@@ -41,9 +38,42 @@
   f[0][column - 1] = "$";
   f[0][0] = null;
 
-  let firsts = first();
+  let expressionsFirst = first(gramatic);
+  let expressionsFollow = follow(gramatic);
 
-  for (let production of productions) {
+  let posX;
+  let posY;
+
+  for (i = 0; i < expressionsFirst.length; i++) {
+    for (j = 0; j < expressionsFirst[i].firsts.length; j++) {
+      for (z = 0; z < f.length; z++) {
+        if (f[z][0] === expressionsFirst[i].variable) {
+          posY = z;
+        }
+      }
+      if (expressionsFirst[i].firsts.indexOf("0") !== -1) {
+        for (m = 0; m < expressionsFollow.length; m++) {
+          if (expressionsFollow[m].followers.indexOf("$") !== -1) {
+            posX = f[0].length - 1;
+          } else {
+            for (n = 0; n < expressionsFollow[m].followers.length; n++) {
+              for (o = 0; o < f[0].length; o++) {
+                if (f[0][o] === expressionsFollow[m].followers[n]) {
+                  posX = o;
+                }
+              }
+            }
+          }
+        }
+      } else {
+        for (x = 0; x < f[0].length; x++) {
+          if (f[0][x] === expressionsFirst[i].firsts[j]) {
+            posX = x;
+          }
+        }
+      }
+      f[posY][posX] = expressionsFirst[i].line;
+    }
   }
 
   console.table(f);
@@ -89,13 +119,12 @@ function retrieveProductions(gramatic) {
   }
 
   return productions;
-} */
+}
 
 function print() {
   const gramatic = document
     .getElementById("expression")
     .value.replace(/ /g, "");
-  //makePredictiveSyntacticTable();
   console.log("FIRSTS");
   const firsts = first(gramatic);
   for (let first of firsts) {
@@ -108,7 +137,7 @@ function print() {
     console.log(follow.variable + " = " + follow.followers);
   }
   console.log("===================");
-  console.log("");
+  makePredictiveSyntacticTable(gramatic);
 }
 
 function follow(gramatic) {
@@ -303,6 +332,7 @@ function retrieveFirstNodes(gramatic) {
       variable: nodeTemp[0],
       expression: nodeTemp.split("->")[1],
       possibleFirstElements: getPossibleFirstElements(nodeTemp),
+      line: nodeTemp,
       firsts: [],
     });
   }

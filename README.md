@@ -7,12 +7,14 @@
 > With [npm](https://www.npmjs.com/):
 
 ```bash
+npm install
 npm run cleilton
 ```
 
 > With [yarn](https://yarnpkg.com/):
 
 ```bash
+yarn
 yarn cleilton
 ```
 
